@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Anim-x Examples</title>
+    <link rel="stylesheet" href="./examples-style.css">
+</head>
+<body>
+
+<h1>Anim-x Examples</h1>
+
+<article>
+    <style>
+        #example-1 .animate-pulse-active {
+            transition: cubic-bezier(.28,.73,.63,1.28) 0.3s transform;
+        }
+
+        #example-1 .animate-pulse {
+            transform: scale(0.3)
+        }
+
+        #example-1 .animate-pulse-end {
+            transform: scale(1)
+        }
+    </style>
+    <div id="example-1" class="content">
+        <div class="square"></div>
+    </div>
+    <div class="code">
+        <pre class="js">
+let element = document.querySelector("#example-1 .square")
+await animateElement(element, "pulse")
+        </pre>
+        <pre class="css">
+#example-1 .animate-pule-active {
+    transition: ease-out 0.3s transform;
+}
+
+#example-1 .animate-pule {
+    transform: scale(0.5)
+}
+
+#example-1 .animate-pule-end {
+    transform: scale(1)
+}
+        </pre>
+    </div>
+</article>
+
+<article>
+    <style>
+        #example-2 .square {
+            position: relative;
+            top: 0;
+            left: 0;
+        }
+
+        #example-2 .animate-slide-right-active, #example-2 .animate-slide-left-active {
+            transition: ease 1s left;
+        }
+
+        #example-2 .animate-slide-right, #example-2 .animate-slide-left-end {
+            left: -100px;
+        }
+
+        #example-2 .animate-slide-right-end, #example-2 .animate-slide-left {
+            left: 100px;
+        }
+    </style>
+    <div id="example-2" class="content">
+        <div class="square"></div>
+    </div>
+    <div class="code">
+        <pre class="js">
+let element = document.querySelector("#example-1 .square")
+await animateElement(element, "slide-right")
+await animateElement(element, "slide-left")
+        </pre>
+        <pre class="css">
+#example-2 .square {
+    position: relative;
+    top: 0;
+    left: 0;
+}
+
+#example-2 .animate-slide-right, #example-2 .animate-slide-left {
+    transition: ease 0.3s left;
+}
+
+#example-2 .animate-slide-right, #example-2 .animate-slide-left-end {
+    left: -200%;
+}
+
+#example-2 .animate-slide-right-end, #example-2 .animate-slide-left {
+    left: 200%;
+}
+        </pre>
+    </div>
+</article>
+
+<article>
+    <style>
+        #example-3 .animate-enter-active, #example-3 .animate-leave-active {
+            transition: ease-out 0.5s all;
+        }
+
+        #example-3 .animate-enter-step,
+        #example-3 .animate-leave-step {
+            transition-delay: 100ms;
+        }
+        #example-3 .animate-enter-step:last-child {
+            transition-delay: 150ms;
+        }
+
+        #example-3 .animate-enter {
+            transform: translateY(50px);
+            opacity: 0;
+        }
+
+        #example-3 .animate-leave-end {
+            opacity: 0;
+        }
+
+        #example-3 .hidden {
+            opacity: 0;
+        }
+    </style>
+    <div id="example-3" class="content">
+        <div class="card"></div>
+        <div class="card"></div>
+        <div class="card"></div>
+        <div class="card"></div>
+        <div class="card"></div>
+        <div class="card"></div>
+    </div>
+    <div class="code">
+        <pre class="js">
+let elements = Array.from(document.querySelectorAll("#example-3 .card"))
+elements.forEach(el => el.classList.remove("hidden"))
+await animateStack("enter", elements)
+await new Promise(res => setTimeout(res, 2000))
+await animateStack("leave", elements)
+elements.forEach(el => el.classList.add("hidden"))
+await new Promise(res => setTimeout(res, 500))
+        </pre>
+        <pre class="css">
+#example-3 .animate-enter-active, #example-3 .animate-leave-active {
+    transition: ease-out 0.5s all;
+}
+
+#example-3 .animate-enter-step,
+#example-3 .animate-leave-step {
+    transition-delay: 100ms;
+}
+
+#example-3 .animate-enter-step:last-child {
+    transition-delay: 150ms;
+}
+
+#example-3 .animate-enter {
+    transform: translateY(50px);
+    opacity: 0;
+}
+
+#example-3 .animate-leave-end {
+    opacity: 0;
+}
+
+#example-3 .hidden {
+    opacity: 0;
+}
+        </pre>
+    </div>
+</article>
+
+
+<script type="module" src="examples.js"></script>
+</body>
+</html>

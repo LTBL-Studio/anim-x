@@ -1,0 +1,27 @@
+{
+  "name": "anim-x",
+  "version": "1.0.0",
+  "description": "Tiny but powerful CSS transitions based animation library",
+  "main": "src/index.js",
+  "directories": {
+    "example": "examples"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/LTBL-Studio/anim-x.git"
+  },
+  "keywords": [
+    "css",
+    "animation",
+    "frontend"
+  ],
+  "author": "LTBL <contact@ltbl.fr>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/LTBL-Studio/anim-x/issues"
+  },
+  "homepage": "https://github.com/LTBL-Studio/anim-x#readme"
+}
