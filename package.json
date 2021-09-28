@@ -7,6 +7,7 @@
     "example": "examples"
   },
   "scripts": {
+    "dev": "http-server -o /examples/examples.html",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -23,5 +24,8 @@
   "bugs": {
     "url": "https://github.com/LTBL-Studio/anim-x/issues"
   },
-  "homepage": "https://github.com/LTBL-Studio/anim-x#readme"
+  "homepage": "https://github.com/LTBL-Studio/anim-x#readme",
+  "devDependencies": {
+    "http-server": "^13.0.2"
+  }
 }
