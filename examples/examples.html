@@ -100,30 +100,23 @@ await animateElement(element, "slide-left")
 
 <article>
     <style>
-        #example-3 .animate-enter-active, #example-3 .animate-leave-active {
-            transition: ease-out 0.5s all;
-        }
+#example-3 .animate-enter-active, #example-3 .animate-leave-active {
+    transition: ease-out 0.2s all;
+    transition-delay: calc(var(--animate-stack-index) * 100ms);
+}
 
-        #example-3 .animate-enter-step,
-        #example-3 .animate-leave-step {
-            transition-delay: 100ms;
-        }
-        #example-3 .animate-enter-step:last-child {
-            transition-delay: 150ms;
-        }
+#example-3 .animate-enter {
+    transform: translateY(50px);
+    opacity: 0;
+}
 
-        #example-3 .animate-enter {
-            transform: translateY(50px);
-            opacity: 0;
-        }
+#example-3 .animate-leave-end {
+    opacity: 0;
+}
 
-        #example-3 .animate-leave-end {
-            opacity: 0;
-        }
-
-        #example-3 .hidden {
-            opacity: 0;
-        }
+#example-3 .hidden {
+    opacity: 0;
+}
     </style>
     <div id="example-3" class="content">
         <div class="card"></div>
@@ -145,16 +138,8 @@ await new Promise(res => setTimeout(res, 500))
         </pre>
         <pre class="css">
 #example-3 .animate-enter-active, #example-3 .animate-leave-active {
-    transition: ease-out 0.5s all;
-}
-
-#example-3 .animate-enter-step,
-#example-3 .animate-leave-step {
-    transition-delay: 100ms;
-}
-
-#example-3 .animate-enter-step:last-child {
-    transition-delay: 150ms;
+    transition: ease-out 0.2s all;
+    transition-delay: calc(var(--animate-stack-index) * 100ms);
 }
 
 #example-3 .animate-enter {
@@ -168,6 +153,100 @@ await new Promise(res => setTimeout(res, 500))
 
 #example-3 .hidden {
     opacity: 0;
+}
+        </pre>
+    </div>
+</article>
+
+<article>
+    <style>
+        @keyframes tada {
+            0% {
+                transform:  rotate(0deg) scaleX(1.00) scaleY(1.00) ;
+            }
+            10% {
+                transform:  rotate(-3deg) scaleX(0.80) scaleY(0.80) ;
+            }
+            20% {
+                transform:  rotate(-3deg) scaleX(0.80) scaleY(0.80) ;
+            }
+            30% {
+                transform:  rotate(3deg) scaleX(1.20) scaleY(1.20) ;
+            }
+            40% {
+                transform:  rotate(-3deg) scaleX(1.20) scaleY(1.20) ;
+            }
+            50% {
+                transform:  rotate(3deg) scaleX(1.20) scaleY(1.20) ;
+            }
+            60% {
+                transform:  rotate(-3deg) scaleX(1.20) scaleY(1.20) ;
+            }
+            70% {
+                transform:  rotate(3deg) scaleX(1.20) scaleY(1.20) ;
+            }
+            80% {
+                transform:  rotate(-3deg) scaleX(1.20) scaleY(1.20) ;
+            }
+            90% {
+                transform:  rotate(3deg) scaleX(1.20) scaleY(1.20) ;
+            }
+            100% {
+                transform:  rotate(0deg) scaleX(1) scaleY(1) ;
+            }
+        }
+
+        #example-4 .animate-drop-active {
+            animation: tada 1.5s ease;
+        }
+    </style>
+    <div id="example-4" class="content">
+        <div class="square"></div>
+    </div>
+    <div class="code">
+        <pre class="js">
+await animateElement(element, "drop")
+await new Promise(res => setTimeout(res, 1000))
+        </pre>
+        <pre class="css">
+@keyframes tada {
+    0% {
+        transform:  rotate(0deg) scaleX(1.00) scaleY(1.00) ;
+    }
+    10% {
+        transform:  rotate(-3deg) scaleX(0.80) scaleY(0.80) ;
+    }
+    20% {
+        transform:  rotate(-3deg) scaleX(0.80) scaleY(0.80) ;
+    }
+    30% {
+        transform:  rotate(3deg) scaleX(1.20) scaleY(1.20) ;
+    }
+    40% {
+        transform:  rotate(-3deg) scaleX(1.20) scaleY(1.20) ;
+    }
+    50% {
+        transform:  rotate(3deg) scaleX(1.20) scaleY(1.20) ;
+    }
+    60% {
+        transform:  rotate(-3deg) scaleX(1.20) scaleY(1.20) ;
+    }
+    70% {
+        transform:  rotate(3deg) scaleX(1.20) scaleY(1.20) ;
+    }
+    80% {
+        transform:  rotate(-3deg) scaleX(1.20) scaleY(1.20) ;
+    }
+    90% {
+        transform:  rotate(3deg) scaleX(1.20) scaleY(1.20) ;
+    }
+    100% {
+        transform:  rotate(0deg) scaleX(1) scaleY(1) ;
+    }
+}
+
+#example-4 .animate-drop-active {
+    animation: tada 1.5s ease;
 }
         </pre>
     </div>

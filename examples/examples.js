@@ -1,4 +1,4 @@
-import {animateElement, animateStack, getAnimationDuration} from "../src/index.js";
+import {animateElement, animateStack} from "../src/index.js";
 
 // Example 1 (pulse)
 
@@ -39,3 +39,15 @@ async function example3(){
     }
 }
 example3()
+
+// Example 4 keyframes based
+
+async function example4(){
+    let element = document.querySelector("#example-4 .square")
+    while(true)
+    {
+        await animateElement(element, "drop")
+        await new Promise(res => setTimeout(res, 1000))
+    }
+}
+example4()

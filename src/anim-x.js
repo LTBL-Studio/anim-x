@@ -24,15 +24,15 @@ export function clearAnimation(el) {
  * 8. Promise is resolved
  *
  * Options:
- *  - extraDelay Number Delay to add before the animation starts
- *  - rejectOnCancel Boolean Reject the promise if animation is cancelled with "clearAnimation()"
+ *  - rejectOnCancel Boolean Reject the promise if animation is cancelled with "clearAnimation()" (default: false)
+ *  - subtree Boolean Wait for all subtree animations to finish to resolve (default: true)
  *
  * @param el HTMLElement Element to animate
  * @param animationName String name of the animation used in class names assigned to element "el"
  * @param options Object Option object for additional parameters
  * @returns {Promise<void>}
  */
-export function animateElement(el, animationName, options = {extraDelay: 0, rejectOnCancel: false}) {
+export function animateElement(el, animationName, options = {rejectOnCancel: false, subtree: true}) {
 
     const { extraDelay, rejectOnCancel } = options
 
@@ -48,19 +48,24 @@ export function animateElement(el, animationName, options = {extraDelay: 0, reje
 
     el.$animxIsAnimating = true;
 
+    let eltAnimations = [];
+    let animationFrameRequest = null;
+
     return new Promise((resolve, reject) => {
 
         el.$animxStopAnimation = () => {
             if (!el.$animxIsAnimating) return;
-            if (el.$animxAnimateCurrentTimeout) {
-                clearTimeout(el.$animxAnimateCurrentTimeout);
+            
+            eltAnimations.forEach(a => a.cancel())
+
+            if (animationFrameRequest) {
+                cancelAnimationFrame(animationFrameRequest);
             }
-            if (el.$animxAnimationFrameRequest) {
-                cancelAnimationFrame(el.$animxAnimationFrameRequest);
-            }
+
             el.classList.remove(fromClass);
             el.classList.remove(toClass);
             el.classList.remove(activeClass);
+
             if(rejectOnCancel) {
                 return reject();
             } else {
@@ -71,16 +76,19 @@ export function animateElement(el, animationName, options = {extraDelay: 0, reje
         el.classList.add(fromClass);
 
         let performAnimation = () => {
-            el.$animxAnimationFrameRequest = requestAnimationFrame(() => {
-                el.$animxAnimationFrameRequest = null;
+            animationFrameRequest = requestAnimationFrame(() => {
+                animationFrameRequest = null;
                 el.classList.add(activeClass);
 
-                return (el.$animxAnimationFrameRequest = requestAnimationFrame(() => {
-                    el.$animxAnimationFrameRequest = null;
+                return (animationFrameRequest = requestAnimationFrame(() => {
+
+                    animationFrameRequest = null;
                     el.classList.add(toClass);
                     el.classList.remove(fromClass);
 
-                    el.$animxAnimateCurrentTimeout = setTimeout(() => {
+                    eltAnimations = el.getAnimations({subtree: options.subtree});
+
+                    Promise.all(eltAnimations.map(a => a.finished)).then(() => {
                         el.classList.remove(fromClass);
                         el.classList.remove(toClass);
                         el.classList.remove(activeClass);
@@ -88,25 +96,17 @@ export function animateElement(el, animationName, options = {extraDelay: 0, reje
                         el.$animxStopAnimation = null;
                         el.$animxIsAnimating = false;
                         return resolve();
-                    }, getAnimationDuration(el));
+                    })
+
                 }));
+
             });
         };
-        if (extraDelay) {
-            el.$animxAnimateCurrentTimeout = extraDelay;
-            return setTimeout(
-                () => {
-                    el.$animxAnimateCurrentTimeout = null;
-                    performAnimation();
-                },
-                extraDelay ? extraDelay : 0
-            );
-        } else {
-            return (el.$animxAnimationFrameRequest = requestAnimationFrame(() => {
-                el.$animxAnimationFrameRequest = null;
-                performAnimation();
-            }));
-        }
+        
+        return (animationFrameRequest = requestAnimationFrame(() => {
+            animationFrameRequest = null;
+            performAnimation();
+        }));
     });
 }
 
@@ -119,20 +119,28 @@ export function getAnimationClasses(animationName){
     const fromClass = `animate-${animationName}`;
     const toClass = `animate-${animationName}-end`;
     const activeClass = `animate-${animationName}-active`;
-    const stepClass = `animate-${animationName}-step`;
+    const stackClass = `animate-${animationName}-stack`;
     return {
         fromClass,
         toClass,
         activeClass,
-        stepClass
+        stackClass
     }
 }
 
 /**
- * Animate a stack of elements separated by a delay
- *
- * A delay between each animation start can be defined into the class "animate-[animationName]-step"
- * The CSS property "transition-delay" gives the delay between each animation **start**.
+ * Animate a stack of elements
+ * 
+ * All animations are triggered at the same time;
+ * Class "animate-[animationName]-stack" is added to all elements in stack
+ * CSS var "--animate-stack-index" is added to each element containing the 0-starting index of the element in stack
+ * This var **MUST** be used to define the animation delay.
+ * 
+ * e.g. 
+ *  .animate-leave-active {
+ *      transition: ease-out 0.2s all;
+ *      transition-delay: calc(var(--animate-stack-index) * 100ms);
+ *  }
  *
  * @see animateElement
  *
@@ -141,61 +149,26 @@ export function getAnimationClasses(animationName){
  * @param options Object Option to pass to "animateElement()"
  * @returns {Promise<void[]>} Resolved when all element animations has ended
  */
-export async function animateStack(elementList, animationName, options = {}) {
-    const {fromClass, toClass, stepClass} = getAnimationClasses(animationName)
+export async function animateStack(elementList, animationName, options) {
+    const {fromClass, toClass, stackClass} = getAnimationClasses(animationName)
 
     let elements = Array.from(elementList)
 
-    let promiseList = elements.map(async (el,i) => {
-        el.classList.add(stepClass)
-        let delay = i * getAnimationDuration(el)
-        el.classList.remove(stepClass)
+    let animationsProms = elements.map(async (el, i) => {
+
+        el.classList.add(stackClass)
         el.classList.add(fromClass)
-        await new Promise(res => setTimeout(res, delay))
-        let result = await animateElement(el, animationName, options)
+        el.style.setProperty("--animate-stack-index", i)
+        await animateElement(el, animationName, options)
         el.classList.add(toClass)
-        return result;
+
     })
 
-    let results = await Promise.all(promiseList);
-    elements.forEach(el => el.classList.remove(toClass))
+    await Promise.all(animationsProms);
 
-    return results
-}
-
-/**
- * Get CSS transition duration (in ms) for the given element
- *
- * Is computed by adding values of "animation-duration" and "animation-delay" CSS properties
- *
- * @param element HTMLElement Element with css transition to get duration from
- * @returns {number} Duration of the animation + delay in ms
- */
-export function getAnimationDuration(element) {
-    let style = window.getComputedStyle(element);
-    let duration = style.transitionDuration;
-    let delay = style.transitionDelay;
-    let animationDuration = style.animationDuration;
-    let animationDelay = style.animationDelay;
-
-    duration = Math.round(
-        duration.indexOf("ms") > -1
-            ? parseFloat(duration)
-            : parseFloat(duration) * 1000
-    );
-    delay = Math.round(
-        delay.indexOf("ms") > -1 ? parseFloat(delay) : parseFloat(delay) * 1000
-    );
-    animationDuration = Math.round(
-        animationDuration.indexOf("ms") > -1
-            ? parseFloat(animationDuration)
-            : parseFloat(animationDuration) * 1000
-    );
-    animationDelay = Math.round(
-        animationDelay.indexOf("ms") > -1
-            ? parseFloat(animationDelay)
-            : parseFloat(animationDelay) * 1000
-    );
-
-    return Math.max(duration + delay, animationDuration + animationDelay);
+    elements.forEach(el => {
+        el.classList.remove(toClass)
+        el.classList.remove(stackClass)
+        el.style.removeProperty("--animate-stack-index")
+    })
 }

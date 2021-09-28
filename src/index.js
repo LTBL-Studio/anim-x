@@ -1,2 +1,1 @@
-export { clearAnimation, animateElement, animateStack, getAnimationDuration } from "./anim-x.js"
-export { animateEnter, animateLeave } from "./presets.js"
+export { clearAnimation, animateElement, animateStack } from "./anim-x.js"
