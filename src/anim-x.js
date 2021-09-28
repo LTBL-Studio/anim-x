@@ -62,9 +62,9 @@ export function animateElement(el, animationName, options = {extraDelay: 0, reje
             el.classList.remove(toClass);
             el.classList.remove(activeClass);
             if(rejectOnCancel) {
-                return resolve();
+                return reject();
             } else {
-                return reject()
+                return resolve();
             }
         };
 
