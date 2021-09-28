@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Anim-x Anchor Examples</title>
+    <link rel="stylesheet" href="./examples-style.css">
+
+    <style>
+    
+    .anchor-example .content {
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+
+    .anchor-example .content button {
+        margin: 10px;
+        background: white;
+        box-shadow: 0 5px 10px rgba(0,0,0,0.3);
+        border: none;
+        padding: 10px;
+        border-radius: 5px;
+        cursor: pointer;
+
+        transition: box-shadow 0.2s ease;
+    }
+
+    .anchor-example .content button:hover {
+        box-shadow: 0 7px 14px rgba(0,0,0,0.2);
+    }
+
+    .anchor-example .content button:active {
+        box-shadow: 0 3px 6px rgba(0,0,0,0.5);
+    }
+
+    .anchor-example .content button img {
+        width: 200px;
+    }
+    
+    .album-title {
+        text-align: left;
+        font-size: 1.5em;
+        font-weight: normal;
+    }
+
+    .album-title .artist {
+        display: block;
+        font-size: 0.5em;
+    }
+
+    .example-modal-backdrop {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+
+        overflow: hidden;
+    }
+
+    .example-modal-backdrop::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0,0,0,0.5);
+    }
+
+    .example-modal {
+        background: white;
+        box-shadow: 0 5px 10px rgba(0,0,0,0.3);
+
+        max-height: 90vh;
+
+        position: absolute;
+        top: 50%;
+        left: 50%;
+
+        width: 300px;
+
+        border-radius: 5px;
+        overflow: hidden;
+
+        color: black;
+        overflow: hidden;
+
+        transform: translateX(-50%) translateY(-50%);
+    }
+
+    .example-modal img {
+        width: 100%;
+    }
+
+    .example-modal .description {
+        padding: 25px;
+    }
+
+    .example-modal .album-title {
+        font-size: 2.5em;
+    }
+
+    .example-modal nav {
+        text-align: center;
+        margin-top: 25px;
+    }
+
+    .example-modal button {
+        color: #1DB954;
+        background: none;
+        border: solid 1px currentColor;
+        border-radius: 5px;
+        padding: 10px;
+        font-weight: bold;
+    }
+
+    .example-modal-backdrop.hidden {
+        display: none;
+    }
+
+    .anchor-example .content button.hidden {
+        opacity: 0;
+    }
+
+    .anchor-example .content button.animate-show-active {
+        transition: opacity 0.3s linear;
+    }
+
+    .anchor-example .content button.animate-show {
+        opacity: 0;
+    }
+
+    .example-modal-backdrop.animate-leave-active, .example-modal-backdrop.animate-enter-active::before {
+        transition: opacity 0.2s linear;
+    }
+
+    .example-modal-backdrop.animate-enter-active::before {
+        transition-delay: 0.1s;
+    }
+
+    .example-modal-backdrop.animate-leave-active .example-modal {
+        transition: all 0.2s ease-in;
+    }
+
+    .example-modal-backdrop.animate-leave-end, .example-modal-backdrop.animate-enter::before {
+        opacity: 0;
+    }
+
+    .example-modal-backdrop.animate-leave-end .example-modal {
+        transform: translateY(-60%) translateX(-50%);
+        opacity: 0;
+    }
+
+    .example-modal-backdrop.animate-enter-active .example-modal,
+    .example-modal-backdrop.animate-enter-active .example-modal .album-title,
+    .example-modal-backdrop.animate-enter-active .example-modal .description {
+        transition: all 0.5s ease;
+    }
+
+    .example-modal-backdrop.animate-enter .example-modal {
+        top: var(--animate-anchor-y);
+        left: var(--animate-anchor-x);
+        width: var(--animate-anchor-width);
+        max-height: var(--animate-anchor-height);
+
+        padding: 10px;
+
+        transform: translateY(0) translateX(0);
+    }
+
+    .example-modal-backdrop.animate-enter .example-modal .album-title {
+        font-size: 1.25em;
+    }
+
+    .example-modal-backdrop.animate-enter .example-modal .description {
+        padding: 0;
+    }
+    
+    </style>
+
+</head>
+<body>
+
+<h1>Anim-x Anchor Example</h1>
+
+<article class="anchor-example">
+<div class="content" id="button-list">
+    <button class="cover-button">
+        <img src="https://i.scdn.co/image/ab67616d00001e02a0e675e7a4710a9cb744fee0" alt="Bae 5 Cover">
+        <h3 class="album-title">
+            <span class="title">Bae 5</span>
+            <span class="artist">By <strong class="artist-name">Yung Bae</strong></span>
+        </h3>
+    </button>
+    <button class="cover-button">
+        <img src="https://i.scdn.co/image/ab67616d00001e0295b29c4fc5ca7ba25ac29de4" alt="Bae 5 Cover">
+        <h3 class="album-title">
+            <span class="title">Stellae</span>
+            <span class="artist">By <strong class="artist-name">ev.exi</strong></span>
+        </h3>
+    </button>
+    <button class="cover-button">
+        <img src="https://i.scdn.co/image/ab67616d00001e021305735f4a6681ff033172d3" alt="Bae 5 Cover">
+        <h3 class="album-title">
+            <span class="title">Virtual world</span>
+            <span class="artist">By <strong class="artist-name">Fibre</strong></span>
+        </h3>
+    </button>
+</div>
+</article>
+
+<div class="example-modal-backdrop hidden" id="modal-backdrop">
+    <div class="example-modal">
+            <img src="https://i.scdn.co/image/ab67616d00001e021305735f4a6681ff033172d3" alt="Bae 5 Cover">
+            <div class="description">
+                <h3 class="album-title">
+                    <span class="title">Virtual world</span>
+                    <span class="artist">By <strong class="artist-name">Fibre</strong></span>
+                </h3>
+                <nav>
+                    <button>Play now</button>
+                </nav>
+            </div>
+    </div>
+</div>
+
+<script type="module" src="anchor-example.js"></script>
+</body>
+</html>

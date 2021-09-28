@@ -32,9 +32,9 @@ export function clearAnimation(el) {
  * @param options Object Option object for additional parameters
  * @returns {Promise<void>}
  */
-export function animateElement(el, animationName, options = {rejectOnCancel: false, subtree: true}) {
+export function animateElement(el, animationName, options = {}) {
 
-    const { extraDelay, rejectOnCancel } = options
+    const { extraDelay, rejectOnCancel, anchor } = {rejectOnCancel: false, subtree: true, anchor: null, ...options};
 
     if(Array.isArray(el) || el instanceof HTMLCollection){
         return animateStack(el,animationName, options)
@@ -47,6 +47,14 @@ export function animateElement(el, animationName, options = {rejectOnCancel: fal
     }
 
     el.$animxIsAnimating = true;
+
+    if(anchor){
+        let anchorBounds = anchor.getBoundingClientRect();
+        el.style.setProperty("--animate-anchor-x", anchorBounds.left + "px")
+        el.style.setProperty("--animate-anchor-y", anchorBounds.top + "px")
+        el.style.setProperty("--animate-anchor-width", anchorBounds.width + "px")
+        el.style.setProperty("--animate-anchor-height", anchorBounds.height + "px")
+    }
 
     let eltAnimations = [];
     let animationFrameRequest = null;
@@ -65,6 +73,10 @@ export function animateElement(el, animationName, options = {rejectOnCancel: fal
             el.classList.remove(fromClass);
             el.classList.remove(toClass);
             el.classList.remove(activeClass);
+            el.style.removeProperty("--animate-anchor-x")
+            el.style.removeProperty("--animate-anchor-y")
+            el.style.removeProperty("--animate-anchor-width")
+            el.style.removeProperty("--animate-anchor-height")
 
             if(rejectOnCancel) {
                 return reject();
@@ -92,6 +104,10 @@ export function animateElement(el, animationName, options = {rejectOnCancel: fal
                         el.classList.remove(fromClass);
                         el.classList.remove(toClass);
                         el.classList.remove(activeClass);
+                        el.style.removeProperty("--animate-anchor-x")
+                        el.style.removeProperty("--animate-anchor-y")
+                        el.style.removeProperty("--animate-anchor-width")
+                        el.style.removeProperty("--animate-anchor-height")
                         el.$animxAnimateCurrentTimeout = null;
                         el.$animxStopAnimation = null;
                         el.$animxIsAnimating = false;
